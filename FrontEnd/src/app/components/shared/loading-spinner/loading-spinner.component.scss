@@ -1,0 +1,19 @@
+@use 'variables' as *;
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: $sombra_2; // Fondo semi-transparente
+  z-index: 2000; // MÁS alto que cualquier modal de PrimeNG
+}
+
+.loading-spinner {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2100; // Por encima del overlay y de los diálogos
+}

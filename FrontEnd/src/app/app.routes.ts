@@ -5,23 +5,30 @@ import { HomeAdminComponent } from './components/admin/home-admin/home-admin.com
 import { AddProductoAdminComponent } from './components/admin/add-producto-admin/add-producto-admin.component';
 import { AlmacenHomeComponent } from './components/almacenista/almacen-home/almacen-home.component';
 import { AlmacenInventarioComponent } from './components/almacenista/almacen-inventario/almacen-inventario.component';
+import { noAuthGuard } from './guard/noAuth/no-auth.guard';
+import { authGuard } from './guard/auth/auth.guard';
+import { HomeComponent } from './components/home/home/home.component';
+import { NotFoundComponent } from './components/shared/not-found/not-found.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: '/login', pathMatch: 'full' },
-    { path: 'login', component: LoginComponent },
-    { path: 'sing-up', component: SingUpComponent },
+    { path: 'login', component: LoginComponent, canActivate: [noAuthGuard] },
+    { path: 'sing-up', component: SingUpComponent, canActivate: [noAuthGuard] },
+     { path: "home", component: HomeComponent, canActivate: [authGuard]},
     {
-        path: 'admin', 
+        path: 'administrador', 
         children: [
             { path: 'home', component: HomeAdminComponent },
             { path: 'add-productos', component: AddProductoAdminComponent}
-        ]
+        ], canActivate: [authGuard]
     },
     {
-        path: 'almacenista',
+        path: 'almacen',
         children: [
             { path: 'home', component: AlmacenHomeComponent },
             { path: 'inventario', component: AlmacenInventarioComponent },
-        ]
-    }
+        ], canActivate: [authGuard]
+    },
+    { path: "**", component: NotFoundComponent }
+
 ];

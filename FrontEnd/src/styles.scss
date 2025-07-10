@@ -2,3 +2,150 @@
 
 /* Importing Bootstrap SCSS file. */
 @use 'bootstrap/scss/bootstrap' as *;
+@use "variables" as *;
+
+::ng-deep .p-stepper {
+  .p-step.p-highlight .p-step-header,
+  .p-step.p-highlight .p-step-number,
+  .p-step.p-highlight .p-step-title {
+    color: #8D0D0D !important;
+    border-color: #8D0D0D !important;
+  }
+
+  .p-step-separator {
+    background-color: #8D0D0D !important;
+  }
+}
+
+
+.swal2-container {
+  z-index: 9999 !important;
+}
+
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f0f2f5;
+  min-height: 100vh;
+  display: flex;
+}
+
+.p-toolbar {
+  border-top: 0.35rem solid $base-color !important;
+  border-bottom: 0.35rem solid $base-color !important;
+  border-left: none !important;
+  border-right: none !important;
+  padding: 0.15rem !important;
+  border-radius: 0.0rem !important;
+}
+.encabezado-ssc {
+  .p-toolbar-group-start,
+  .p-toolbar-group-end {
+    flex: 0 0 auto;    
+    display: flex;
+    align-items: center;
+  }
+
+  .p-toolbar-group-center {
+    flex: 1 1 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 0; // evita overflow
+  }
+
+  .logo {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-right: 1rem;
+
+    .sma {
+      font-size: 2rem;
+      font-weight: bold;
+      color: $base-color;
+      line-height: 1;
+    }
+
+    .sub {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      color: $base-color;
+      margin-top: -0.25rem;
+    }
+  }
+
+   .titulo {
+    flex: 1 1 auto;
+    width: 100%;
+    max-width: 100%;
+    background-color: $base-color;
+    color: white;
+    padding: 0.5rem 1rem;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1rem;
+    text-transform: uppercase;
+    border-radius: 4px;
+    white-space: normal;
+    word-wrap: break-word;
+  }
+
+  .usuario {
+    font-size: 0.9rem;
+  }
+
+  .franja-verde {
+    width: 100%;
+    height: 6px;
+    background-color: $secondary-color;
+  }
+}
+
+.footer {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  font-size: 0.75rem;
+  color: #444;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.swal2-popup {
+  max-height: 300px !important;
+  max-width: 300px !important;
+}
+.swal2-icon {
+  font-size: 13px !important;
+}
+
+.swal2-text {
+  max-height: 70px;
+}
+.swal2-text {
+  font-size: .7rem;
+  font-weight: 400;
+}
+
+.swal2-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.swal2-confirm {
+  background-color: #444 !important;
+}
