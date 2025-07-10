@@ -2,6 +2,7 @@ package com.Castores.BackEnd.repository;
 
 import org.springframework.stereotype.Repository;
 
+import com.Castores.BackEnd.model.ProductoEntity;
 import com.Castores.BackEnd.model.Usuario;
 import com.Castores.BackEnd.model.UsuarioEntity;
 
@@ -52,5 +53,6 @@ public class UsuarioRepository {
 
 	    return (String) oQuery.getSingleResult();
 	}
+
 	
 }

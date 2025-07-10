@@ -1,17 +1,14 @@
 package com.Castores.BackEnd.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter
-@Setter
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ResponseError {
 	private String sAtributo;
     private String sError;
-    
-    public ResponseError(String sAtributo, String sError) {
-        this.sAtributo = sAtributo;
-        this.sError = sError;
-    }
 }
 
