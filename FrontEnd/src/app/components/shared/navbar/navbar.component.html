@@ -16,7 +16,7 @@
 
   <!-- Usuario -->
   <ng-template #end>
-    <p-splitbutton *ngIf="(authStatus$ | async)" icon="pi pi-user" label="user" [model]="userOptions"
+    <p-splitbutton *ngIf="(authStatus$ | async)" icon="pi pi-user" label="{{nombre}}" [model]="userOptions"
       severity="secondary" class="usuario"></p-splitbutton>
   </ng-template>
 </p-toolbar>

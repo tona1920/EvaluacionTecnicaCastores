@@ -58,10 +58,10 @@ export class AuthService {
     return localStorage.getItem('access_token');
   } 
   
-  getUsername(): string | null {
-    return localStorage.getItem('username');
+  getUsername(): string {
+    const user = localStorage.getItem('username');
+    return user || '';
   }
-
   getUserRol(): string | null {
     return localStorage.getItem('rol_id');
   }  

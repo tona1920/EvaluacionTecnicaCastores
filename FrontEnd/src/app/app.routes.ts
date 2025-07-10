@@ -14,20 +14,24 @@ export const routes: Routes = [
     { path: '', redirectTo: '/login', pathMatch: 'full' },
     { path: 'login', component: LoginComponent, canActivate: [noAuthGuard] },
     { path: 'sing-up', component: SingUpComponent, canActivate: [noAuthGuard] },
-     { path: "home", component: HomeComponent, canActivate: [authGuard]},
+     { path: "home", component: HomeComponent, canActivate: [authGuard] },
     {
         path: 'administrador', 
         children: [
             { path: 'home', component: HomeAdminComponent },
             { path: 'add-productos', component: AddProductoAdminComponent}
-        ], canActivate: [authGuard]
+        ], 
+        canActivate: [authGuard],
+        data: { roles: ['1'] }
     },
     {
         path: 'almacen',
         children: [
             { path: 'home', component: AlmacenHomeComponent },
             { path: 'inventario', component: AlmacenInventarioComponent },
-        ], canActivate: [authGuard]
+        ], 
+        canActivate: [authGuard],
+        data: { roles: ['2'] }
     },
     { path: "**", component: NotFoundComponent }
 

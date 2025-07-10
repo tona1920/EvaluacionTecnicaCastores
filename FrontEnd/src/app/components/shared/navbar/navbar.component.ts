@@ -21,6 +21,7 @@ export class NavbarComponent implements OnInit {
   authStatus$: Observable<boolean>;
   userStatus$: Observable<number>;
   estatus: number = 0;
+  nombre : string ='user';
 
   constructor(
     private router: Router,
@@ -39,6 +40,7 @@ export class NavbarComponent implements OnInit {
         this.estatus = estatus;
 
         if (isAuthenticated) {
+          this.nombre = this.authService.getUsername();
           // Mostrar siempre el menú de usuario
           this.userOptions = [
             {
@@ -55,6 +57,7 @@ export class NavbarComponent implements OnInit {
         } else {
           this.userOptions = [];
           this.menuDinamicItems = [];
+          this.nombre ='user';
         }
       }
     );
