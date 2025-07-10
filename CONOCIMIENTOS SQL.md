@@ -40,8 +40,8 @@ GROUP BY p.idProducto,p.nombre
 ```
 **1.7) Traer todos los productos (independientemente de si tienen ventas o no) y la suma total ($) vendida por producto.**<br>
 ``` SQL
-SELECT p.idProducto,p.nombre, ISNULL(SUM(v.cantidad),0)*p.precio totalventas
+SELECT p.idProducto,p.nombre, COALESCE(SUM(v.cantidad),0)*p.precio totalventas
 FROM Productos p 
 LEFT JOIN Ventas v ON p.idProducto = v.idProducto
-GROUP BY p.idProducto,p.nombre,p.precio
+GROUP BY  p.idProducto,p.nombre,p.precio
 ```
