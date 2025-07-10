@@ -1,0 +1,11 @@
+@use 'variables' as *;
+
+::ng-deep .p-scrolltop {
+  background-color: $base-color !important; // fondo del botón
+  color: #ffffff !important;            // color del ícono
+  border: none;
+}
+
+::ng-deep .p-scrolltop:hover {
+  background-color: $base-color !important; // color en hover
+}

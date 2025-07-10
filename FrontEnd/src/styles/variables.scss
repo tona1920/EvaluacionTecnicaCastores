@@ -1,0 +1,24 @@
+/* COLORES*/
+
+$base-color:#ba1f37;
+$secondary-color:#87a23c;
+
+$blanco: #fff;
+$blanco_1:#dcdcdc;
+
+$negro: #000;
+$gris:#6c757d;
+
+/* DEGRADADOS */
+$sombra_1: rgba(0, 0, 0, 0.1);
+
+$sombra_2: rgba(0, 0, 0, 0.048);
+
+/* CLASES GENERICAS */
+.texto-base{
+    color:$base-color;
+}
+
+.texto-secundario{
+    color:$secondary-color;
+}

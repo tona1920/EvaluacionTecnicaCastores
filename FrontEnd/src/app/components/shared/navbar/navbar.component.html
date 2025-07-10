@@ -1,0 +1,29 @@
+<p-toolbar class="encabezado-ssc">
+  <!-- Logo -->
+  <ng-template #start>
+    <div class="logo">
+      <span class="sma">SIGI</span>
+      <span class="sub">Castores</span>
+    </div>
+  </ng-template>
+
+  <!-- Título -->
+  <ng-template #center>
+    <div class="titulo">
+      Sistema Integral de Gestión de Inventario 
+    </div>
+  </ng-template>
+
+  <!-- Usuario -->
+  <ng-template #end>
+    <p-splitbutton *ngIf="(authStatus$ | async)" icon="pi pi-user" label="user" [model]="userOptions"
+      severity="secondary" class="usuario"></p-splitbutton>
+  </ng-template>
+</p-toolbar>
+
+<!-- Franja decorativa -->
+<div class="franja-verde"></div>
+
+<div class="container my-4 flex justify-content-center">
+  <p-menubar *ngIf="(authStatus$ | async) && estatus === 2" [model]="menuDinamicItems"/>
+</div>

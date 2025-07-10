@@ -1,0 +1,28 @@
+<!-- Contenedor centrado en toda la pantalla -->
+<div class="flex justify-center items-center min-h-screen px-4 not-found-container">
+  <!-- Tarjeta -->
+  <p-card styleClass="w-full max-w-md shadow-5 text-center">
+    <ng-template #title>
+      <h1 class="m-0 text-4xl md:text-5xl">404</h1>
+      <h2 class="m-0 text-xl md:text-2xl">Recurso no disponible</h2>
+    </ng-template>
+
+    <ng-template #subtitle>
+      <p class="text-sm m-0">
+        La página que intentas visitar no está disponible, ha sido eliminada o su ubicación ha cambiado.
+      </p>
+    </ng-template>
+
+    <p-divider></p-divider>
+
+    <p-button
+      icon="pi pi-arrow-left"
+      label="Regresar al inicio"
+      [raised]="true"
+      [rounded]="true"
+      severity="primary"
+      class="mt-3"
+      (click)="goHome()"
+    />
+  </p-card>
+</div>
