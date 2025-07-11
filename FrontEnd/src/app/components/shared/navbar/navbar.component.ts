@@ -46,11 +46,6 @@ export class NavbarComponent implements OnInit {
           // Mostrar siempre el menú de usuario
           this.userOptions = [
             {
-              label: 'Perfil',
-              icon: 'pi pi-user',
-              command: () => this.irAlPerfil(),
-            },
-            {
               label: 'Cerrar sesión',
               icon: 'pi pi-sign-out',
               command: () => this.cerrarSesion(),
@@ -60,11 +55,9 @@ export class NavbarComponent implements OnInit {
           const userId = this.authService.getUserId();
           this.pagesService.obtenerRutas(userId).subscribe({
             next: (rutas: Rutas[]) => {
-              console.log(rutas);
               this.menuDinamicItems = this.convertirRutasAMenu(rutas);
             },
             error: (err) => {
-              console.log(err)
               this.messageService.add({
                 severity: 'error',
                 summary: 'Error al obtener rutas',
@@ -88,11 +81,6 @@ export class NavbarComponent implements OnInit {
     this.authService.logout();
     this.router.navigate(['/login']);
   }
-  irAlPerfil() {
-    this.authService.logout();
-    this.router.navigate(['/login']);
-  }
-
   private convertirRutasAMenu(rutas: Rutas[]): MenuItem[] {
     return rutas.map((ruta) => ({
       label: ruta.nombre,

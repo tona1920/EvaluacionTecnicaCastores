@@ -60,7 +60,6 @@ public class ProductoService {
     public Response<Object> insertarProducto(ProductoEntity response) {
         try {
             int iResp = repository.insertarProducto(response);
-            System.out.println("2");
             
             return new Response<>(200, "Consulta exitosa", iResp);
         } catch (IllegalArgumentException e) {

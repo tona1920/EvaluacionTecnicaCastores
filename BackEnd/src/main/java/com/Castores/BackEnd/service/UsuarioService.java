@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.Castores.BackEnd.config.AppConfig;
 import com.Castores.BackEnd.model.HistorialProductos;
+import com.Castores.BackEnd.model.ProductoEntity;
 import com.Castores.BackEnd.model.Response;
 import com.Castores.BackEnd.model.ResponseError;
 import com.Castores.BackEnd.model.Rutas;
@@ -65,14 +66,37 @@ public class UsuarioService {
         }
     }
     
+    public Response<List<UsuarioEntity>> obtenerUsuarios() {
+        try {
+            List<UsuarioEntity> lista = repository.obtenerUsuarios();
+            return new Response<>(200, "Consulta exitosa", lista);
+        } catch (IllegalArgumentException e) {
+            return new Response<>(500, "Error al consultar la información", List.of(new ResponseError("Usuarios", e.getMessage())));
+        } catch (Exception e) {
+            return new Response<>(500, "Error general", List.of(new ResponseError("consulta", e.getMessage())));
+        }
+    }
+    
     public Response<List<Rutas>> obtenerRutas(Integer idUsuario) {
         try {
             List<Rutas> lista = repository.buscarRuta(idUsuario);
             return new Response<>(200, "Consulta exitosa", lista);
         } catch (IllegalArgumentException e) {
-            return new Response<>(500, "Error al consultar la información", List.of(new ResponseError("Productos", e.getMessage())));
+            return new Response<>(500, "Error al consultar la información", List.of(new ResponseError("Rutas", e.getMessage())));
         } catch (Exception e) {
             return new Response<>(500, "Error general", List.of(new ResponseError("consulta", e.getMessage())));
+        }
+    }
+    
+    public Response<Object> actualizarEstatus(Usuario response) {
+        try {
+            int iResp = repository.actualizar(response);
+            
+            return new Response<>(200, "Consulta exitosa", iResp);
+        } catch (IllegalArgumentException e) {
+            return new Response<>(500, "Error al consultar la información", List.of(new ResponseError("Productos", e.getMessage())));
+        } catch (Exception e) {
+            return new Response<>(500, "Error general", List.of(new ResponseError("insert", e.getMessage())));
         }
     }
     

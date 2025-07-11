@@ -1,1 +1,186 @@
-<p>usuarios works!</p>
+<div class="container mb-4">
+  <div class="d-flex justify-content-md-end">
+    <p-button label="Crear Usuario" icon="pi pi-plus" severity="success" (click)="showDialog()" ></p-button>
+  </div>
+</div>
+
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-body">
+                <p-table #dt [value]="usuarios" [loading]="loading" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10, 25, 50]"
+                   [globalFilterFields]="['nombre', 'correo','rol', 'estatusTexto']"[tableStyle]="{ 'min-width': '75rem' }">
+                <ng-template #caption>
+                  <div class="flex">
+                        <span class="text-xl font-bold">Productos</span>
+                        <p-button type="button" icon="pi pi-refresh" class="ml-auto" label="Recargar" (click)="reset()" text />
+                    </div>
+                    <br>
+                    <div class="flex">
+                        <p-button label="Limpiar Filtro" [outlined]="false" [raised]="true" severity="secondary" icon="pi pi-filter-slash" (click)="clear(dt)" />
+                        <p-iconfield iconPosition="left" class="ml-auto">
+                            <p-inputicon styleClass="pi pi-search" />
+                            <input pInputText [(ngModel)]="searchValue" type="text" (input)="filtrarGlobal($event,dt)"
+                                placeholder="Buscar producto" />
+                        </p-iconfield>
+                    </div>
+                </ng-template>
+
+                    <ng-template #header>
+                    <tr>
+                        <th pSortableColumn="nombre" style="width: 25%">Nombre <p-sortIcon field="nombre" /></th>
+                        <th pSortableColumn="correo" style="width: 15%">Correo <p-sortIcon field="correo" /></th>
+                        <th pSortableColumn="rol" style="width: 15%">Rol <p-sortIcon field="rol" /></th>
+                        <th pSortableColumn="estatus" style="width: 15%">Estatus <p-sortIcon field="estatus" /></th>
+                        <th style="width: 25%">Acción</th>
+                    </tr>
+                    </ng-template>
+
+                    <ng-template #body let-user>
+                    <tr>
+                        <td>{{ user.nombre }}</td>
+                        <td>{{ user.correo }}</td>
+                        <td>{{ user.rol }}</td>
+                        <td> <p-tag [value]="user.estatusTexto" [severity]="user.estatus === false  ? 'info' : 'warning'"></p-tag> </td>
+                        <td>
+                            <p-button icon="pi pi-power-off" title="Modificar Estatus" label="{{ user.estatus ? 'Desactivar' : 'Activar' }}" severity="warn" size="small" class="mr-2" (click)="abrirDialogoEstatus(user.idUsuario,user.nombre, user.estatus)"> </p-button>
+                            
+                        </td>
+                    </tr>
+                    </ng-template>
+
+                    <ng-template #emptymessage>
+                    <tr>
+                        <td colspan="5">No hay usuarios para mostrar.</td>
+                    </tr>
+                    </ng-template>
+                </p-table>
+        </div>
+    </div>
+</div>
+
+
+<p-dialog
+  header="Cambiar Estatus"
+  [(visible)]="mostrarDialogoEstatus"
+  [modal]="true"
+  [style]="{ width: '25rem' }"
+>
+  <p>¿Estás seguro que deseas {{ estatusSeleccionado ? 'desactivar' : 'activar' }} el usuario {{ nombreSeleccionado }}?</p>
+
+  <div class="mt-3 text-right">
+    <button pButton label="Sí" icon="pi pi-check" class="m-2" severity="success" (click)="cambiarEstatus()"></button>
+    <button pButton label="Cancelar" icon="pi pi-times" severity="secondary" class="m-2" (click)="mostrarDialogoEstatus = false"></button>
+  </div>
+</p-dialog>
+
+<p-dialog header="Crear nuevo usuario" [modal]="true" [(visible)]="visible" [style]="{ width: '40rem' }"
+  [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" [maximizable]="true">
+  <form [formGroup]="form" (ngSubmit)="guardar()" class="p-fluid">
+
+  <!-- Nombre -->
+    <p-floatlabel variant="on" class="m-2  w-100">
+        <p-iconfield class="px-2">
+            <p-inputicon class="pi pi-user" />
+            <input pInputText id="nombre" type="text" formControlName="nombre" pSize="large" autocomplete="off" class="w-100" />
+        </p-iconfield>
+        <label for="nombre">Nombre del usuario.</label>
+    </p-floatlabel>
+    <small *ngIf="form.get('nombre')?.touched && form.get('nombre')?.invalid" class="p-error text-danger">
+      El nombre es obligatorio (3-200 caracteres).
+    </small>
+    <br />
+    <!-- Correo -->
+    <p-floatlabel variant="on" class="m-2  w-100">
+        <p-iconfield class="px-2">
+            <p-inputicon class="pi pi-envelope" />
+            <input pInputText id="correo" type="text" formControlName="correo" pSize="large" autocomplete="off" class="w-100" />
+        </p-iconfield>
+        <label for="correo">Correo del usuario.</label>
+    </p-floatlabel>
+    <small *ngIf="form.get('correo')?.touched && form.get('correo')?.invalid" class="p-error text-danger">
+      El Correo es obligatorio (3-200 caracteres).
+    </small>
+    <br />
+
+    <!-- Rol -->
+    <p-floatlabel variant="on" class="m-2  w-100">
+        <p-iconfield class="px-2">
+             <p-select formControlName="idRol"  inputId="rol" [options]="roles"  [editable]="true"  optionLabel="nombre" optionValue="idRol" class="w-full" >
+                 <ng-template #dropdownicon>
+                    <i class="pi pi-wrench"></i>
+                </ng-template>
+             </p-select>
+        </p-iconfield>
+        <label for="rol">Rol.</label>
+    </p-floatlabel>
+    <small *ngIf="form.get('idRol')?.touched && form.get('idRol')?.invalid" class="p-error text-danger">
+    Debe seleccionar un rol válido.
+    </small>
+    <br />
+    <br />
+    <button type="submit" pButton label="Guardar"
+      class="button p-button-rounded p-button-primary" [disabled]="form.invalid" ></button>
+  </form>
+</p-dialog>
+
+<p-dialog header="Modificar producto" [modal]="true" [(visible)]="mostrarDialogoModificar" [style]="{ width: '40rem' }"
+  [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" [maximizable]="true">
+  <form [formGroup]="form"  class="p-fluid">
+
+    <!-- Nombre -->
+    <p-floatlabel variant="on" class="m-2  w-100">
+        <p-iconfield class="px-2">
+            <p-inputicon class="pi pi-user" />
+            <input pInputText id="nombre" type="text" formControlName="nombre" pSize="large" autocomplete="off" class="w-100" />
+        </p-iconfield>
+        <label for="nombre">Nombre del usuario.</label>
+    </p-floatlabel>
+    <small *ngIf="form.get('nombre')?.touched && form.get('nombre')?.invalid" class="p-error text-danger">
+      El nombre es obligatorio (3-200 caracteres).
+    </small>
+    <br />
+    <!-- Correo -->
+    <p-floatlabel variant="on" class="m-2  w-100">
+        <p-iconfield class="px-2">
+            <p-inputicon class="pi pi-envelope" />
+            <input pInputText id="correo" type="text" formControlName="correo" pSize="large" autocomplete="off" class="w-100" />
+        </p-iconfield>
+        <label for="correo">Correo del usuario.</label>
+    </p-floatlabel>
+    <small *ngIf="form.get('correo')?.touched && form.get('correo')?.invalid" class="p-error text-danger">
+      El Correo es obligatorio (3-200 caracteres).
+    </small>
+    <br />
+
+    <!-- Rol -->
+    <p-floatlabel variant="on" class="m-2  w-100">
+        <p-iconfield class="px-2">
+             <p-select formControlName="idRol"  inputId="rol" [options]="roles"  [editable]="true"  optionLabel="nombre" optionValue="idRol" class="w-full" >
+                 <ng-template #dropdownicon>
+                    <i class="pi pi-wrench"></i>
+                </ng-template>
+             </p-select>
+        </p-iconfield>
+        <label for="rol">Rol.</label>
+    </p-floatlabel>
+    <small *ngIf="form.get('idRol')?.touched && form.get('idRol')?.invalid" class="p-error text-danger">
+    Debe seleccionar un rol válido.
+    </small>
+    <br />
+    <br />
+    <button type="submit" pButton label="Guardar"
+      class="button p-button-rounded p-button-primary" [disabled]="form.invalid"  ></button>
+  </form>
+</p-dialog>
+
+<p-dialog
+  header="Contraseña generada"
+  [(visible)]="mostrarDialogoPassword"
+  [modal]="true"
+  [closable]="true"
+  [style]="{ width: '30vw' }"
+>
+  <p><strong>Usuario:</strong> {{ nombreUsuario }}</p>
+  <p><strong>Contraseña:</strong> {{ passwordGenerada }}</p>
+  <p class="text-danger"><em>Guarde esta información de inmediato.</em></p>
+</p-dialog>

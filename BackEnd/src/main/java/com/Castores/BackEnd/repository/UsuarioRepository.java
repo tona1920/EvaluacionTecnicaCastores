@@ -16,6 +16,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
+import jakarta.transaction.Transactional;
 
 @Repository
 public class UsuarioRepository {
@@ -46,6 +47,34 @@ public class UsuarioRepository {
             return null;
         }
     }
+	
+	public List<UsuarioEntity> obtenerUsuarios() {
+        String sSQL =  """
+        		 SELECT tu.idusuario, tu.nombre, tu.correo, tr.idrol, tr.nombre, tu.estatus
+         		 FROM Usuarios tu 
+         		 INNER JOIN Rol tr ON tu.idrol = tr.idrol 
+        		 """;
+        Query oQuery = entityManager.createNativeQuery(sSQL);
+        
+        List<Object[]> lstResultados = oQuery.getResultList();
+        
+		List<UsuarioEntity> lstUsuarios = new ArrayList<>();
+
+	    for (Object[] fila : lstResultados) {
+	    	UsuarioEntity dto = new UsuarioEntity(
+	    	    ((Number) fila[0]).intValue(),                    
+	            (String) fila[1], 
+	            (String) fila[2], 
+	            "",
+	            ((Number) fila[3]).intValue(),
+	            (String) fila[4],
+	            ((boolean) fila[5])
+	        );
+	    	lstUsuarios.add(dto);
+	    }
+
+	    return lstUsuarios;
+}
 	
 	public List<Rutas> buscarRuta(Integer idUsuario) {
             String sSQL =  """
@@ -87,5 +116,15 @@ public class UsuarioRepository {
 	    return (String) oQuery.getSingleResult();
 	}
 
-	
+	@Transactional
+	public int actualizar(Usuario user) {
+	        Query oQuery = entityManager.createNativeQuery(
+	        		"update usuarios  set estatus=:estatus where idUsuario=:idUsuario"
+	        );
+	        oQuery.setParameter("estatus", user.getEstatus());
+	        oQuery.setParameter("idUsuario", user.getIdUsuario());
+	        oQuery.executeUpdate();
+
+	        return 1;
+	}
 }

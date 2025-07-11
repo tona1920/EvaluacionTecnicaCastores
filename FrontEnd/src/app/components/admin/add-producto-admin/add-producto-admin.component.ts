@@ -76,8 +76,6 @@ export class AddProductoAdminComponent {
           estatusTexto: p.accion == 1 ? 'Entrada' : 'Salida'
         }));
         this.loading = false;
-        console.log(this.productos);
-        
       },
       error: err => {
         this.loading = false;

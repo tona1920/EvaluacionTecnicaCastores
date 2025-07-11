@@ -273,8 +273,6 @@ export class HomeAdminComponent {
       estatus:  !this.estatusSeleccionado,
       accion: 2
     };
-
-        console.log(dto);
     this.service.ejecutarAccion(dto).subscribe({
       next: () => {
         this.messageService.add({
@@ -301,7 +299,7 @@ export class HomeAdminComponent {
           this.messageService.add({
             severity: 'error',
             summary: 'Error',
-            detail: 'No se pudo actualizar el stock'
+            detail: 'No se pudo actualizar el estatus'
           });
         }
       }

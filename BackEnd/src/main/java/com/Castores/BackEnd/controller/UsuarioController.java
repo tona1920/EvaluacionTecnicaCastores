@@ -12,6 +12,7 @@ import com.Castores.BackEnd.model.Response;
 import com.Castores.BackEnd.model.ResponseError;
 import com.Castores.BackEnd.model.Rutas;
 import com.Castores.BackEnd.model.Usuario;
+import com.Castores.BackEnd.model.UsuarioEntity;
 import com.Castores.BackEnd.service.UsuarioService;
 
 import jakarta.validation.Valid;
@@ -42,6 +43,31 @@ public class UsuarioController {
 	        Response<Object> response = service.insertarUsuario(request);
 	        return ResponseEntity.status(response.getICode()).body(response);
 	    }
+	    
+	    @PostMapping("/actualizar")
+	    public ResponseEntity<Response<Object>> actualizarUsuario(@Valid @RequestBody Usuario request, BindingResult result) {
+	    	
+	    	if (result.hasErrors()) {
+	            List<ResponseError> errores = result.getFieldErrors().stream()
+	                .map(err -> new ResponseError(err.getField(), err.getDefaultMessage()))
+	                .toList();
+
+	            Response<Object> response = new Response<>(400, "Errores de validación", errores);
+	            return ResponseEntity.status(404).body(response);
+	        }
+
+	        // Si no hay errores, continúa normalmente
+	        Response<Object> response = service.actualizarEstatus(request);
+	        return ResponseEntity.status(response.getICode()).body(response);
+	    }
+	    
+	    @GetMapping("/todos")
+		public ResponseEntity<Response<List<UsuarioEntity>>> obtenerUsuarios() {
+			 Response<List<UsuarioEntity>> response = service.obtenerUsuarios();
+
+			 // Devolver la respuesta HTTP con el código que vino del servicio
+			 return ResponseEntity.status(response.getICode()).body(response);
+		}
 
 	    @PostMapping("/rutas")
 		public ResponseEntity<Response<List<Rutas>>> obtenerProductosActivos(@Valid @RequestBody IdentificadorUsuarioDTO request, BindingResult validation) {

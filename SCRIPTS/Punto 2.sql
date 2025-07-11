@@ -253,7 +253,6 @@ main_block: BEGIN
 
         UPDATE Productos 
         SET nombre = COALESCE(sNombre, nombre),
-            cantidad = COALESCE(iCantidad, cantidad),
             precio = COALESCE(iPrecio, precio),
             estatus = COALESCE(bEstatus, estatus)
         WHERE idProducto = iProducto;

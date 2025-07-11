@@ -9,6 +9,9 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Usuario {
+    @NotNull(message = "El usuario es obligatorio.")
+    private Integer idUsuario;
+	
 	@NotBlank(message = "El nombre es obligatorio.")
     private String nombre;
 	
@@ -18,4 +21,7 @@ public class Usuario {
     
     @NotNull(message = "El rol es obligatorio.")
     private Integer idRol;
+    
+    @NotNull(message = "El estatus es obligatorio.")
+    private Boolean estatus;
 }
