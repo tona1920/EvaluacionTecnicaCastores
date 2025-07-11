@@ -68,6 +68,7 @@ CREATE TABLE EntradaProducto (
 CREATE TABLE Modulo(
   idModulo INT AUTO_INCREMENT PRIMARY KEY,
   nombre VARCHAR(50) NOT null,
+  icono VARCHAR(100) not null,
   ruta VARCHAR(200) NOT null,
   dtFecha DATETIME DEFAULT CURRENT_TIMESTAMP,
   estatus BOOLEAN NOT NULL DEFAULT TRUE
@@ -93,6 +94,17 @@ INSERT INTO Rol (nombre, descripcion) VALUES
 INSERT INTO Usuarios (nombre, correo, contrasena, idRol, estatus) 
 VALUES ('admin', 'admin@gmail.com', '$2a$10$62RWiu5g40xyNaMCK.AmKeh2JL1wNj/aLrfb3JuuzGSvqNNEN2OGa', 1, TRUE);
 
+-- insertar rutas
+INSERT INTO Modulo (nombre, icono, ruta, estatus) 
+VALUES 
+  ('Inicio', 'pi pi-home', 'administrador/home', true),
+  ('Registro de Actividades', 'pi pi-history', 'administrador/historico', true),
+   ('Usuarios', 'pi pi-users', 'administrador/usuarios', true),
+  ('Ventas y Almacén', 'pi pi-shopping-cart', 'almacen/home', true);
+
+INSERT INTO ModuloRol(idRol,idModulo)
+VALUES
+	(1,1),(1,2),(1,3),(2,4);
 
 CREATE PROCEDURE sp_insertar_usuario(
     IN sNombre VARCHAR(100),

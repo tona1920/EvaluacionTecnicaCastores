@@ -84,7 +84,8 @@ public class ProductoRepository {
 	        return 1;
 	}
 	
-	
+
+	@Transactional
 	public String modificarProducto(Producto producto) {
         Query oQuery = entityManager.createNativeQuery(
                 "CALL sp_actualizar_producto(:sNombre, :iCantidad, :iPrecio, :sComentario, :bEstatus, :iUsuario, :iProducto, :iAccion)"
@@ -97,9 +98,7 @@ public class ProductoRepository {
         oQuery.setParameter("bEstatus", producto.getEstatus());
         oQuery.setParameter("iUsuario", producto.getIdUsuario());
         oQuery.setParameter("iProducto", producto.getIdProducto());
-        oQuery.setParameter("iAccion", producto.getIAccion());
-
-        oQuery.executeUpdate();
+        oQuery.setParameter("iAccion", producto.getAccion());
 	    return (String) oQuery.getSingleResult();
 	}
 	

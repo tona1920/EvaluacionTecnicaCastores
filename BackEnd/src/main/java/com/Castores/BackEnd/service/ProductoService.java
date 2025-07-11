@@ -76,7 +76,7 @@ public class ProductoService {
             // Validación lógica según acción
             List<ResponseError> errores = new ArrayList<>();
 
-            switch (dto.getIAccion()) {
+            switch (dto.getAccion()) {
                 case 1: // actualizar producto
                     if (dto.getNombre() == null && dto.getCantidad() == null && dto.getPrecio() == null && dto.getEstatus() == null) {
                         errores.add(new ResponseError("accion", "Debes enviar al menos un campo para actualizar (nombre, cantidad, precio, estatus)"));
@@ -90,6 +90,10 @@ public class ProductoService {
                     break;
 
                 case 3: // agregar stock
+                	if (dto.getCantidad() == null || dto.getCantidad() <= 0) {
+                        errores.add(new ResponseError("cantidad", "Cantidad positiva requerida para esta acción"));
+                    }
+                    break;
                 case 4: // registrar venta
                     if (dto.getCantidad() == null || dto.getCantidad() <= 0) {
                         errores.add(new ResponseError("cantidad", "Cantidad positiva requerida para esta acción"));
@@ -105,7 +109,6 @@ public class ProductoService {
             }
 
             String jsonResult = repository.modificarProducto(dto);
-            
             Map<String, Object> result = mapper.readValue(jsonResult, Map.class);
 
             int iCode = (int) result.get("iCode");
@@ -118,7 +121,7 @@ public class ProductoService {
                 return new Response<>(iCode, sMensaje, data);
             }
 
-            if (iCode == 404 && result.containsKey("aErrores")) {
+            if (iCode != 200 && result.containsKey("aErrores")) {
                 List<ResponseError> errores2 = ((List<Map<String, String>>) result.get("aErrores")).stream()
                         .map(err -> {
                             String key = err.keySet().iterator().next();

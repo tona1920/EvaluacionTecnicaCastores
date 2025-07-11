@@ -37,7 +37,7 @@ public class ProductosController {
 	}
 	
 	 
-	@GetMapping("/activos")
+	@GetMapping("/historial")
 	public ResponseEntity<Response<List<HistorialProductos>>> obtenerHistorial() {
 		 Response<List<HistorialProductos>> response = service.obtenerHistorial();
 
@@ -47,7 +47,7 @@ public class ProductosController {
 	 
 	@GetMapping("/todos")
 	public ResponseEntity<Response<List<ProductoEntity>>> obtenerProductos() {
-		 Response<List<ProductoEntity>> response = service.obtenerProductosActivos();
+		 Response<List<ProductoEntity>> response = service.obtenerProductos();
 
 		 // Devolver la respuesta HTTP con el código que vino del servicio
 		 return ResponseEntity.status(response.getICode()).body(response);
@@ -71,7 +71,8 @@ public class ProductosController {
 	 
 	@PostMapping("/accion")
 	public ResponseEntity<?> ejecutarAccion(@Valid @RequestBody Producto dto, BindingResult result) {
-	     if (result.hasErrors()) {
+		
+		if (result.hasErrors()) {
 	         List<ResponseError> errores = result.getFieldErrors().stream()
 	             .map(err -> new ResponseError(err.getField(), err.getDefaultMessage()))
 	             .toList();

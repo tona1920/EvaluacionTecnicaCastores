@@ -1,8 +1,14 @@
 package com.Castores.BackEnd.repository;
 
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.stereotype.Repository;
 
+import com.Castores.BackEnd.model.HistorialProductos;
 import com.Castores.BackEnd.model.ProductoEntity;
+import com.Castores.BackEnd.model.Rutas;
 import com.Castores.BackEnd.model.Usuario;
 import com.Castores.BackEnd.model.UsuarioEntity;
 
@@ -39,6 +45,33 @@ public class UsuarioRepository {
         } catch (NoResultException e) {
             return null;
         }
+    }
+	
+	public List<Rutas> buscarRuta(Integer idUsuario) {
+            String sSQL =  """
+            		select m.nombre,m.ruta,m.icono 
+					from usuarios u 
+					inner join modulorol rm on u.idRol = rm.idRol
+					inner join modulo m on rm.idModulo = m.idModulo and m.estatus =1
+					WHERE u.idUsuario =:idUsuario and u.estatus =1
+            		 """;
+            Query oQuery = entityManager.createNativeQuery(sSQL);
+            oQuery.setParameter("idUsuario", idUsuario);
+            
+            List<Object[]> lstResultados = oQuery.getResultList();
+            
+    		List<Rutas> lstRutas = new ArrayList<>();
+
+    	    for (Object[] fila : lstResultados) {
+    	    	Rutas dto = new Rutas(
+    	            (String) fila[0],                    
+    	            (String) fila[1],  
+    	            (String) fila[2]
+    	        );
+    	    	lstRutas.add(dto);
+    	    }
+
+    	    return lstRutas;
     }
 	
 	public String insertarUsuario(Usuario oRequest, String password) {
