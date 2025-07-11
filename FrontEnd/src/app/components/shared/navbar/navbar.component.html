@@ -16,7 +16,7 @@
 
   <!-- Usuario -->
   <ng-template #end>
-    <p-splitbutton *ngIf="(authStatus$ | async)" icon="pi pi-user" label="user" [model]="userOptions"
+    <p-splitbutton *ngIf="(authStatus$ | async)" icon="pi pi-user" label="{{nombre}}" [model]="userOptions"
       severity="secondary" class="usuario"></p-splitbutton>
   </ng-template>
 </p-toolbar>
@@ -25,5 +25,5 @@
 <div class="franja-verde"></div>
 
 <div class="container my-4 flex justify-content-center">
-  <p-menubar *ngIf="(authStatus$ | async) && estatus === 2" [model]="menuDinamicItems"/>
+  <p-menubar *ngIf="(authStatus$ | async)" [model]="menuDinamicItems"/>
 </div>

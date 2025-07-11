@@ -8,6 +8,7 @@ import { Toolbar } from 'primeng/toolbar';
 import { AuthService } from '../../../services/auth/auth.service';
 import { combineLatest, Observable } from 'rxjs';
 import { PagesService } from '../../../services/pages/pages.service';
+import { Rutas } from '../../../models/producto';
 
 @Component({
   selector: 'app-navbar',
@@ -21,10 +22,12 @@ export class NavbarComponent implements OnInit {
   authStatus$: Observable<boolean>;
   userStatus$: Observable<number>;
   estatus: number = 0;
+  nombre: string = 'user';
 
   constructor(
     private router: Router,
     private authService: AuthService,
+    private pagesService: PagesService,
     private messageService: MessageService
   ) {
     this.authStatus$ = this.authService.authStatus$;
@@ -39,6 +42,7 @@ export class NavbarComponent implements OnInit {
         this.estatus = estatus;
 
         if (isAuthenticated) {
+          this.nombre = this.authService.getUsername();
           // Mostrar siempre el menú de usuario
           this.userOptions = [
             {
@@ -52,9 +56,29 @@ export class NavbarComponent implements OnInit {
               command: () => this.cerrarSesion(),
             },
           ];
+          if (isAuthenticated && estatus === 1) {
+          const userId = this.authService.getUserId();
+          this.pagesService.obtenerRutas(userId).subscribe({
+            next: (rutas: Rutas[]) => {
+              console.log(rutas);
+              this.menuDinamicItems = this.convertirRutasAMenu(rutas);
+            },
+            error: (err) => {
+              console.log(err)
+              this.messageService.add({
+                severity: 'error',
+                summary: 'Error al obtener rutas',
+                detail: err.message || 'Error desconocido al obtener rutas.',
+                life: 2500,
+              });
+            }
+          });
+          }
+          
         } else {
           this.userOptions = [];
           this.menuDinamicItems = [];
+          this.nombre = 'user';
         }
       }
     );
@@ -67,5 +91,13 @@ export class NavbarComponent implements OnInit {
   irAlPerfil() {
     this.authService.logout();
     this.router.navigate(['/login']);
+  }
+
+  private convertirRutasAMenu(rutas: Rutas[]): MenuItem[] {
+    return rutas.map((ruta) => ({
+      label: ruta.nombre,
+      icon: ruta.icono,
+      routerLink: ruta.ruta
+    }));
   }
 }

@@ -68,6 +68,7 @@ CREATE TABLE EntradaProducto (
 CREATE TABLE Modulo(
   idModulo INT AUTO_INCREMENT PRIMARY KEY,
   nombre VARCHAR(50) NOT null,
+  icono VARCHAR(100) not null,
   ruta VARCHAR(200) NOT null,
   dtFecha DATETIME DEFAULT CURRENT_TIMESTAMP,
   estatus BOOLEAN NOT NULL DEFAULT TRUE
@@ -93,6 +94,17 @@ INSERT INTO Rol (nombre, descripcion) VALUES
 INSERT INTO Usuarios (nombre, correo, contrasena, idRol, estatus) 
 VALUES ('admin', 'admin@gmail.com', '$2a$10$62RWiu5g40xyNaMCK.AmKeh2JL1wNj/aLrfb3JuuzGSvqNNEN2OGa', 1, TRUE);
 
+-- insertar rutas
+INSERT INTO Modulo (nombre, icono, ruta, estatus) 
+VALUES 
+  ('Inicio', 'pi pi-home', 'administrador/home', true),
+  ('Registro de Actividades', 'pi pi-history', 'administrador/historico', true),
+   ('Usuarios', 'pi pi-users', 'administrador/usuarios', true),
+  ('Ventas y Almacén', 'pi pi-shopping-cart', 'almacen/home', true);
+
+INSERT INTO ModuloRol(idRol,idModulo)
+VALUES
+	(1,1),(1,2),(1,3),(2,4);
 
 CREATE PROCEDURE sp_insertar_usuario(
     IN sNombre VARCHAR(100),
@@ -166,3 +178,149 @@ BEGIN
     END IF;
 END
 
+CREATE PROCEDURE sp_actualizar_producto(
+    IN sNombre VARCHAR(200),
+    IN iCantidad INT,
+    IN iPrecio DECIMAL(16,2),
+    IN sComentario VARCHAR(250),
+    IN bEstatus BOOLEAN,
+    IN iUsuario INT,
+    IN iProducto INT,
+    IN iAccion INT -- 1: Actualizar Producto, 2: Actualizar estatus, 3: Agregar stock, 4: Registrar venta
+)
+main_block: BEGIN
+    DECLARE sErrores JSON DEFAULT JSON_ARRAY();
+    DECLARE sResultado JSON;
+    DECLARE err_msg TEXT;
+    DECLARE viRol INT DEFAULT NULL;
+    DECLARE vCantidadActual INT DEFAULT NULL;
+    DECLARE vEstatusActual BOOLEAN DEFAULT NULL;
+
+    -- Manejo de errores internos
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION 
+    BEGIN
+        GET DIAGNOSTICS CONDITION 1 err_msg = MESSAGE_TEXT;
+        SET sErrores = JSON_ARRAY_APPEND(sErrores, '$', JSON_OBJECT('Error interno', err_msg));
+        ROLLBACK;
+        SET sResultado = JSON_OBJECT('iCode', 500, 'sMensaje', 'Error interno', 'aErrores', sErrores);
+        SELECT sResultado AS resultado;
+    END;
+
+    START TRANSACTION;
+
+    -- Validar existencia del usuario y obtener rol
+    SELECT idRol INTO viRol FROM Usuarios WHERE idUsuario = iUsuario AND estatus = 1 LIMIT 1;
+    IF viRol IS NULL THEN
+        SET sErrores = JSON_ARRAY_APPEND(sErrores, '$', JSON_OBJECT('Usuario', 'El usuario no existe o está inactivo.'));
+    END IF;
+
+    -- Validar existencia del producto y obtener estado actual
+    SELECT cantidad, estatus INTO vCantidadActual, vEstatusActual
+    FROM Productos
+    WHERE idProducto = iProducto
+    LIMIT 1;
+
+    IF vCantidadActual IS NULL THEN
+        SET sErrores = JSON_ARRAY_APPEND(sErrores, '$', JSON_OBJECT('Producto', 'El producto no existe.'));
+    END IF;
+
+    -- Validar acción permitida
+    IF iAccion NOT IN (1, 2, 3, 4) THEN
+        SET sErrores = JSON_ARRAY_APPEND(sErrores, '$', JSON_OBJECT('Acción', 'Acción no válida.'));
+    END IF;
+
+    -- Validar acción según rol
+    IF (iAccion IN (1, 2, 3) AND viRol != 1) OR (iAccion = 4 AND viRol != 2) THEN
+        SET sErrores = JSON_ARRAY_APPEND(sErrores, '$', JSON_OBJECT('Rol', 'Rol no autorizado para esta acción.'));
+    END IF;
+
+    -- Retornar errores si existen
+    IF JSON_LENGTH(sErrores) > 0 THEN
+        SET sResultado = JSON_OBJECT(
+            'iCode', 400,
+            'sMensaje', 'Errores de validación',
+            'aErrores', sErrores
+        );
+        SELECT sResultado AS resultado;
+        ROLLBACK;
+        LEAVE main_block;
+    END IF;
+
+    -- Acción 1: Actualizar producto (admin)
+    IF iAccion = 1 AND viRol = 1 THEN
+        INSERT INTO LogProducto (idUsuario, idProducto, cantidad, estatusAnterior, estatusNuevo, comentario)
+        VALUES (iUsuario, iProducto, vCantidadActual, vEstatusActual, bEstatus, COALESCE(sComentario, ''));
+
+        UPDATE Productos 
+        SET nombre = COALESCE(sNombre, nombre),
+            cantidad = COALESCE(iCantidad, cantidad),
+            precio = COALESCE(iPrecio, precio),
+            estatus = COALESCE(bEstatus, estatus)
+        WHERE idProducto = iProducto;
+
+        SET sResultado = JSON_OBJECT('iCode', 200, 'sMensaje', 'Producto actualizado.', 'iIdUsuario', iUsuario);
+        SELECT sResultado AS resultado;
+        COMMIT;
+        LEAVE main_block;
+    END IF;
+
+    -- Acción 2: Actualizar estatus (admin)
+    IF iAccion = 2 AND viRol = 1 THEN
+        INSERT INTO LogProducto (idUsuario, idProducto, cantidad, estatusAnterior, estatusNuevo, comentario)
+        VALUES (iUsuario, iProducto, vCantidadActual, vEstatusActual, bEstatus, COALESCE(sComentario, ''));
+
+        UPDATE Productos 
+        SET estatus = bEstatus
+        WHERE idProducto = iProducto;
+
+        SET sResultado = JSON_OBJECT('iCode', 200, 'sMensaje', 'Estatus actualizado.', 'iIdUsuario', iUsuario);
+        SELECT sResultado AS resultado;
+        COMMIT;
+        LEAVE main_block;
+    END IF;
+
+    -- Acción 3: Agregar stock (admin)
+    IF iAccion = 3 AND viRol = 1 THEN
+        INSERT INTO LogProducto (idUsuario, idProducto, cantidad, estatusAnterior, estatusNuevo, comentario)
+        VALUES (iUsuario, iProducto, vCantidadActual, vEstatusActual, vEstatusActual, COALESCE(sComentario, ''));
+
+        INSERT INTO EntradaProducto (idUsuario, idProducto, cantidad, comentario)
+        VALUES (iUsuario, iProducto, iCantidad, COALESCE(sComentario, ''));
+
+        UPDATE Productos 
+        SET cantidad = cantidad + iCantidad
+        WHERE idProducto = iProducto;
+
+        SET sResultado = JSON_OBJECT('iCode', 200, 'sMensaje', 'Stock actualizado.', 'iIdUsuario', iUsuario);
+        SELECT sResultado AS resultado;
+        COMMIT;
+        LEAVE main_block;
+    END IF;
+
+    -- Acción 4: Registrar venta (vendedor)
+    IF iAccion = 4 AND viRol = 2 THEN
+        IF vCantidadActual < iCantidad THEN
+            SET sErrores = JSON_ARRAY_APPEND(sErrores, '$', JSON_OBJECT('Stock', 'Cantidad insuficiente para realizar la venta.'));
+            SET sResultado = JSON_OBJECT('iCode', 400, 'sMensaje', 'No se pudo registrar la venta', 'aErrores', sErrores);
+            SELECT sResultado AS resultado;
+            ROLLBACK;
+            LEAVE main_block;
+        END IF;
+
+        INSERT INTO LogProducto (idUsuario, idProducto, cantidad, estatusAnterior, estatusNuevo, comentario)
+        VALUES (iUsuario, iProducto, vCantidadActual, vEstatusActual, vEstatusActual, COALESCE(sComentario, ''));
+
+        INSERT INTO Ventas (idUsuario, idProducto, cantidad, comentario)
+        VALUES (iUsuario, iProducto, iCantidad, COALESCE(sComentario, ''));
+
+        UPDATE Productos 
+        SET cantidad = cantidad - iCantidad
+        WHERE idProducto = iProducto;
+
+        SET sResultado = JSON_OBJECT('iCode', 200, 'sMensaje', 'Venta registrada.', 'iIdUsuario', iUsuario);
+        SELECT sResultado AS resultado;
+        COMMIT;
+        LEAVE main_block;
+    END IF;
+
+END main_block;

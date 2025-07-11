@@ -7,8 +7,10 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 
 import com.Castores.BackEnd.config.AppConfig;
+import com.Castores.BackEnd.model.HistorialProductos;
 import com.Castores.BackEnd.model.Response;
 import com.Castores.BackEnd.model.ResponseError;
+import com.Castores.BackEnd.model.Rutas;
 import com.Castores.BackEnd.model.Usuario;
 import com.Castores.BackEnd.model.UsuarioEntity;
 import com.Castores.BackEnd.repository.UsuarioRepository;
@@ -60,6 +62,17 @@ public class UsuarioService {
         } catch (Exception e) {
             List<ResponseError> errores = List.of(new ResponseError("Interno", e.getMessage()));
             return new Response<>(500, "Error al insertar usuario", errores);
+        }
+    }
+    
+    public Response<List<Rutas>> obtenerRutas(Integer idUsuario) {
+        try {
+            List<Rutas> lista = repository.buscarRuta(idUsuario);
+            return new Response<>(200, "Consulta exitosa", lista);
+        } catch (IllegalArgumentException e) {
+            return new Response<>(500, "Error al consultar la información", List.of(new ResponseError("Productos", e.getMessage())));
+        } catch (Exception e) {
+            return new Response<>(500, "Error general", List.of(new ResponseError("consulta", e.getMessage())));
         }
     }
     

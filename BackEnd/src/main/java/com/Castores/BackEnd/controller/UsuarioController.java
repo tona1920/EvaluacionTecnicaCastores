@@ -6,8 +6,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import com.Castores.BackEnd.model.IdentificadorUsuarioDTO;
+import com.Castores.BackEnd.model.ProductoEntity;
 import com.Castores.BackEnd.model.Response;
 import com.Castores.BackEnd.model.ResponseError;
+import com.Castores.BackEnd.model.Rutas;
 import com.Castores.BackEnd.model.Usuario;
 import com.Castores.BackEnd.service.UsuarioService;
 
@@ -40,4 +43,21 @@ public class UsuarioController {
 	        return ResponseEntity.status(response.getICode()).body(response);
 	    }
 
+	    @PostMapping("/rutas")
+		public ResponseEntity<Response<List<Rutas>>> obtenerProductosActivos(@Valid @RequestBody IdentificadorUsuarioDTO request, BindingResult validation) {
+	    	 if (validation.hasErrors()) {
+	             // Construir lista de errores igual que en crearUsuario
+	             List<ResponseError> errores = validation.getFieldErrors().stream()
+	                     .map(err -> new ResponseError(err.getField(), err.getDefaultMessage()))
+	                     .toList();
+	             return ResponseEntity
+	                     .badRequest()
+	                     .body(new Response<>(400, "Error en parámetros", errores));
+	         }
+	    	 
+			 Response<List<Rutas>> response = service.obtenerRutas(request.getIdUsuario());
+
+			 // Devolver la respuesta HTTP con el código que vino del servicio
+			 return ResponseEntity.status(response.getICode()).body(response);
+		}
 }

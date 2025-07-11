@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ResponseError {
-	private String sAtributo;
-    private String sError;
+public class Rutas {
+	private String nombre;
+	private String ruta;
+	private String icono;
 }
-
