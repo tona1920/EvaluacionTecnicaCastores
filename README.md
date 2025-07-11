@@ -5,14 +5,14 @@ Evaluación técnica para el área de TI
 
 ## 📂 Estructura del Repositorio
 
-- [📁 Frontend](./frontend): Proyecto Angular 19 que contiene la interfaz de usuario.
-- [📁 Backend](./backend): Proyecto Spring Boot con Java 21/Maven que expone la API REST.
-- [📁 Scripts](./scripts): Contiene scripts SQL utilizados en la base de datos (MySQL 8).
+- [📁 Frontend](./FrontEnd): Proyecto Angular 19 que contiene la interfaz de usuario.
+- [📁 Backend](./BackEnd): Proyecto Spring Boot con Java 21/Maven que expone la API REST.
+- [📁 Scripts](./SCRIPTS): Contiene scripts SQL utilizados en la base de datos (MySQL 8).
 - [📄 CONOCIMIENTOS SQL.md](./CONOCIMIENTOS%20SQL.md): Documento teórico correspondiente a la parte de conocimientos en SQL.
 
 🎥 [Ver video con la funcionalidad del aplicativo](https://drive.google.com/file/d/1QnC2Xs18Y9vQ_AG-BsWdb9Gaoy1VoXQw/view?usp=sharing)  
 
-📊 [Ver Diagrama Relacional de la Base de Datos](./scripts/diagrama_relacional.png)
+📊 [Ver Diagrama Relacional de la Base de Datos](./SCRIPTS/diagrama_relacional.png)
 
 ![Diagrama Relacional](./SCRIPTS/diagrama_relacional.png)
 
