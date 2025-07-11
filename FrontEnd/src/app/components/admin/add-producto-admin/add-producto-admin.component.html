@@ -1,1 +1,51 @@
-<p>add-producto-admin works!</p>
+<div class="container mt-4">
+    <div class="card ">
+        <div class="card-body">
+                <p-table #dt [value]="productos" [loading]="loading" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10, 25, 50]"
+                   [globalFilterFields]="['producto', 'cantidad', 'fecha','usuario', 'estatusTexto']"[tableStyle]="{ 'min-width': '75rem' }">
+                <ng-template #caption>
+                    <div class="flex">
+                        <span class="text-xl font-bold">Historial de Movimientos</span>
+                        <p-button type="button" icon="pi pi-refresh" class="ml-auto" label="Recargar" (click)="reset()" text />
+                    </div>
+                    <br>
+                    <div class="flex">
+                        
+                        <p-button label="Limpiar Filtro" [outlined]="false" [raised]="true" severity="secondary" icon="pi pi-filter-slash" (click)="clear(dt)" />
+                        <p-iconfield iconPosition="left" class="ml-auto">
+                            <p-inputicon styleClass="pi pi-search" />
+                            <input pInputText [(ngModel)]="searchValue" type="text" (input)="filtrarGlobal($event,dt)"
+                                placeholder="Buscar producto" />
+                        </p-iconfield>
+                    </div>
+                </ng-template>
+
+                    <ng-template #header>
+                    <tr>
+                        <th pSortableColumn="producto" style="width: 25%">Nombre <p-sortIcon field="nombre" /></th>
+                        <th pSortableColumn="cantidad" style="width: 15%">Cantidad <p-sortIcon field="cantidad" /></th>
+                        <th pSortableColumn="fecha" style="width: 15%">Fecha <p-sortIcon field="precio" /></th>
+                        <th pSortableColumn="usuario" style="width: 15%">Responsable <p-sortIcon field="precio" /></th>
+                        <th pSortableColumn="estatus" style="width: 15%">Estatus <p-sortIcon field="estatus" /></th>
+                    </tr>
+                    </ng-template>
+
+                    <ng-template #body let-prod>
+                    <tr>
+                        <td>{{ prod.producto }}</td>
+                        <td>{{(prod.accion === 2 ? '-' : '+') + ' ' + prod.cantidad  }}</td>
+                        <td>{{ prod.fecha | date:'dd/MM/yyyy HH:mm:ss' }}</td>
+                        <td>{{ prod.usuario }}</td>
+                        <td> <p-tag [value]="prod.estatusTexto" [severity]="prod.accion === 2  ? 'info' : 'warning'"></p-tag> </td>
+                    </tr>
+                    </ng-template>
+
+                    <ng-template #emptymessage>
+                    <tr>
+                        <td colspan="5">No hay productos para mostrar.</td>
+                    </tr>
+                    </ng-template>
+                </p-table>
+        </div>
+    </div>
+</div>

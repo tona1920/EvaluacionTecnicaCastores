@@ -4,7 +4,6 @@ import { SingUpComponent } from './components/auth/sing-up/sing-up.component';
 import { HomeAdminComponent } from './components/admin/home-admin/home-admin.component';
 import { AddProductoAdminComponent } from './components/admin/add-producto-admin/add-producto-admin.component';
 import { AlmacenHomeComponent } from './components/almacenista/almacen-home/almacen-home.component';
-import { AlmacenInventarioComponent } from './components/almacenista/almacen-inventario/almacen-inventario.component';
 import { noAuthGuard } from './guard/noAuth/no-auth.guard';
 import { authGuard } from './guard/auth/auth.guard';
 import { HomeComponent } from './components/home/home/home.component';
@@ -19,7 +18,7 @@ export const routes: Routes = [
         path: 'administrador', 
         children: [
             { path: 'home', component: HomeAdminComponent },
-            { path: 'add-productos', component: AddProductoAdminComponent}
+            { path: 'historico', component: AddProductoAdminComponent}
         ], 
         canActivate: [authGuard],
         data: { roles: ['1'] }
@@ -28,7 +27,6 @@ export const routes: Routes = [
         path: 'almacen',
         children: [
             { path: 'home', component: AlmacenHomeComponent },
-            { path: 'inventario', component: AlmacenInventarioComponent },
         ], 
         canActivate: [authGuard],
         data: { roles: ['2'] }

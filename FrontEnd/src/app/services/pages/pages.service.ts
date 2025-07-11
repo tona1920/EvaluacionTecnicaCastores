@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { environmet } from '../../../environments/environmet';
 import { HttpClient } from '@angular/common/http';
-import { catchError, Observable, throwError } from 'rxjs';
+import { catchError, map, Observable, throwError } from 'rxjs';
+import { ResponseAPI, Rutas } from '../../models/producto';
 
 @Injectable({
   providedIn: 'root'
@@ -11,9 +12,14 @@ export class PagesService {
 
   constructor(private http: HttpClient) {}
 
-  obtenerRutas(idUser: number): Observable<any> {
-    return this.http.post<any>(`${this.API_URL}/obtener_rutas`, { idUsuario: idUser }).pipe(
-      catchError(err => throwError(() => err))
-    );
+  obtenerRutas(idUser: number): Observable<Rutas[]> {
+    return this.http.post<ResponseAPI<Rutas[]>>(`${this.API_URL}/rutas`, { idUsuario: idUser }).pipe(
+      map(resp => {
+          if (resp.icode !== 200) {
+            throw new Error(resp.smensaje);
+          }
+          return resp.adata || [];
+        })
+      );
   }
 }

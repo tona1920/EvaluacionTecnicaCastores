@@ -25,5 +25,5 @@
 <div class="franja-verde"></div>
 
 <div class="container my-4 flex justify-content-center">
-  <p-menubar *ngIf="(authStatus$ | async) && estatus === 2" [model]="menuDinamicItems"/>
+  <p-menubar *ngIf="(authStatus$ | async)" [model]="menuDinamicItems"/>
 </div>
